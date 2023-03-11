@@ -2,13 +2,16 @@ package ru.netology.delivery.test;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.logevents.SelenideLogger;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.AfterAll;
 import org.openqa.selenium.Keys;
 import ru.netology.delivery.data.DataGeneration;
+import io.qameta.allure.selenide.AllureSelenide;
 
 import java.time.Duration;
 import java.util.Locale;
@@ -21,14 +24,22 @@ import static ru.netology.delivery.data.DataGeneration.generateDate;
 public class DeliveryTest {
     String planDate = generateDate(3);
 
+    @BeforeAll
+    static void setUpAll() {
+        SelenideLogger.addListener("allure", new AllureSelenide());
+    }
+
 
     @BeforeEach
     void setup() {
         Configuration.holdBrowserOpen = true;
         open("http://localhost:9999");
-
     }
 
+    @AfterAll
+    static void tearDownAll() {
+        SelenideLogger.removeListener("allure");
+    }
 
     @Test
     @DisplayName("Should successful plan and replan meeting")
